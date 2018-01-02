@@ -1,0 +1,28 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<unistd.h>
+int main(){
+	char father[]={"the message from father.\n"};
+	char child[]={"the message from child.\n"};
+	int chan1[2],chan2[2];
+	char buff[50];
+	memset(buff,0,sizeof(buff));
+	pipe(chan1);
+	pipe(chan2);
+	if(fork()){
+		close(chan1[0]);
+		close(chan2[1]);
+		write(chan1[1],father,strlen(father));
+		close(chan1[1]);
+		read(chan2[0],buff,50);
+		printf("father process:%s\n",buff);
+	}else{
+		close(chan1[1]);
+                close(chan2[0]);
+                read(chan1[0],buff,50);
+                printf("child process:%s\n",buff);
+		write(chan2[1],child,strlen(child));
+		close(chan2[1]);
+	}
+	return 0;
+}

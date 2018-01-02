@@ -1,0 +1,59 @@
+import java.util.Random;
+import java.util.Scanner;
+
+public class SaleSystem extends Thread
+{
+    static final int ACROSS = 3;
+    static final int SEAT = 5;
+
+    static volatile int across = 1;
+    static volatile int seat = 1;
+
+    public void run()
+    {
+        Thread winF = new Thread(new SaleWindow(),"一号窗口");
+        Thread winS = new Thread(new SaleWindow(),"二号窗口");
+        Thread winT = new Thread(new SaleWindow(),"三号窗口");
+
+        winF.start();
+        winS.start();
+        winT.start();
+    }
+
+    public static void main(String[] args) {
+        Thread Tickets = new SaleSystem();
+        System.out.println("观众老爷小伙伴们！<<五十度黑>>要开始售票了哦");
+        System.out.println("1.开始售票；0.离开电影院");
+
+        int start = new Scanner(System.in).nextInt();
+        if (start == 1)
+            Tickets.start();
+        else if (start != 0)
+            System.out.println("输入不合法哦。。。");
+    }
+}
+
+class SaleWindow implements Runnable
+{
+    public void run()
+    {
+        while (SaleSystem.across <= SaleSystem.ACROSS)
+        {
+            System.out.println(Thread.currentThread().getName() + "出售了" + (SaleSystem.across) + "排" + (SaleSystem.seat ++) + "座的电影票！");
+
+            Random time = new Random();
+
+            try {
+                Thread.sleep((long)time.nextInt(3000));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            if (SaleSystem.seat == (SaleSystem.SEAT + 1))
+            {
+                ++SaleSystem.across;
+                SaleSystem.seat -= SaleSystem.SEAT;
+            }
+        }
+    }
+}

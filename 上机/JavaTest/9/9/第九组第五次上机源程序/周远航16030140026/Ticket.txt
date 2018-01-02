@@ -1,0 +1,63 @@
+package Fifth;
+
+import java.math.MathContext;
+import java.util.Random;
+
+import javax.swing.text.StyledEditorKit.ForegroundAction;
+
+public class Ticket{
+	private int Tcketnumber=0;
+	private int idx=1;
+	
+	public Ticket(int Tcketnumber) 
+	{
+		this.Tcketnumber=Tcketnumber;
+	}
+	
+	public void sell(int SellNumber)
+	{
+		synchronized (this) 
+		{
+			if (idx<=Tcketnumber)
+			{
+				System.out.println("--窗口 "+SellNumber+"出售编号"+idx+"电影票");
+				idx++;
+			}
+		}
+	}
+}
+class Sell extends Thread
+{
+	private Ticket t;
+	private int SellNumber=0;
+	
+	public Sell(Ticket t,int SellNumber)
+	{
+		this.t=t;
+		this.SellNumber=SellNumber;
+	}
+	
+	public void run()  
+	{
+		while(true)
+		{
+			try
+			{
+				t.sell(SellNumber);
+				Thread.sleep(RandomOfLong.getLong());
+			}
+			catch (Exception e) {}
+		}
+	}
+}
+class RandomOfLong
+{
+	public static long getLong()
+	{
+		long min = 1;
+		long max = 10;
+		long rangeLong = min + (((long) (new Random().nextDouble() * (max - min))));
+		return rangeLong;
+	}
+	
+}
